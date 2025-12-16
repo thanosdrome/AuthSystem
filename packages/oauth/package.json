@@ -1,0 +1,11 @@
+{
+    "name": "@auth/oauth",
+    "version": "1.0.0",
+    "type": "module",
+    "private": true,
+    "main": "src/index.ts",
+    "dependencies": {
+        "@auth/core": "1.0.0",
+        "@auth/tokens": "1.0.0"
+    }
+}

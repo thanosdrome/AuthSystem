@@ -1,0 +1,7 @@
+{
+    "extends": "./ts.node.json",
+    "compilerOptions": {},
+    "files": [],
+    "include": [],
+    "references": []
+}

@@ -1,0 +1,15 @@
+{
+    "extends": [
+        "../../configs/tsconfig.base.json",
+        "../../configs/ts.paths.json"
+    ],
+    "compilerOptions": {
+        "baseUrl": "../../",
+        "noEmit": true,
+        "outDir": "dist"
+    },
+    "include": [
+        "src",
+        "adapters"
+    ]
+}

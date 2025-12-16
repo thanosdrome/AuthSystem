@@ -1,0 +1,12 @@
+{
+    "name": "@auth/tokens",
+    "version": "1.0.0",
+    "type": "module",
+    "private": true,
+    "main": "src/index.ts",
+    "dependencies": {
+        "@auth/core": "1.0.0",
+        "@auth/crypto": "1.0.0",
+        "jsonwebtoken": "^9.0.2"
+    }
+}

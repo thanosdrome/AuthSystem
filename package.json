@@ -1,0 +1,37 @@
+{
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22.11.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -b",
+    "clean": "rimraf packages/*/dist apps/*/dist",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dev:auth": "tsx --tsconfig apps/authSystem/tsconfig.json apps/authSystem/src/index.ts"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/pg": "^8.16.0",
+    "@vitest/coverage-v8": "^4.0.16",
+    "rimraf": "^6.0.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.4.0",
+    "vitest": "^4.0.16"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "argon2": "^0.44.0",
+    "fastify": "^5.6.2",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.16.3"
+  }
+}
