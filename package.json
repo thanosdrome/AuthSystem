@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -14,12 +15,18 @@
     "clean": "rimraf packages/*/dist apps/*/dist",
     "test": "vitest run",
     "test:watch": "vitest",
-    "dev:auth": "tsx --tsconfig apps/authSystem/tsconfig.json apps/authSystem/src/index.ts"
+    "dev": "tsx --tsconfig apps/authSystem/tsconfig.json apps/authSystem/src/index.ts",
+    "dev:auth": "tsx --tsconfig apps/authSystem/tsconfig.json apps/authSystem/src/index.ts",
+    "migrate:up": "dotenv -e .env -- node-pg-migrate up -m infrastructure/db/migrations",
+    "migrate:down": "dotenv -e .env -- node-pg-migrate down -m infrastructure/db/migrations"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
     "@types/pg": "^8.16.0",
     "@vitest/coverage-v8": "^4.0.16",
+    "dotenv": "^17.2.3",
+    "dotenv-cli": "^11.0.0",
+    "node-pg-migrate": "^8.0.4",
     "rimraf": "^6.0.0",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
@@ -32,6 +39,7 @@
     "argon2": "^0.44.0",
     "fastify": "^5.6.2",
     "jsonwebtoken": "^9.0.3",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "redis": "^5.10.0"
   }
 }

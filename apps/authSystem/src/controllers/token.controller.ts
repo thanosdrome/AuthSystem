@@ -1,4 +1,4 @@
-import { Session } from '@/core/entities/session.js';
+import { Session } from '@/core';
 import { container } from '../bootstrap/container.js';
 
 export async function tokenController(input: {
@@ -8,4 +8,8 @@ export async function tokenController(input: {
     codeVerifier: string;
 }) {
     return container.oauthTokenService.exchangeCode(input);
+}
+
+export async function refreshTokenController(token: string) {
+    return container.refreshTokenService.rotate(token);
 }

@@ -1,4 +1,4 @@
-import { UserStatus } from '../enums/user-status.js';
+import { UserStatus } from "../enums/user-status";
 
 export interface User {
     id: string;
@@ -6,7 +6,7 @@ export interface User {
     emailVerified: boolean;
     passwordHash: string;
     status: UserStatus;
-    metadata?: Record<string, unknown>;
     createdAt: Date;
     updatedAt: Date;
 }
+export { UserStatus };

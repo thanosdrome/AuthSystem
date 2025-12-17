@@ -1,9 +1,13 @@
 import Fastify from 'fastify';
 import cookie from '@fastify/cookie';
 
-import { registerLoginRoutes } from '../routes/login.routes.js';
-import { registerAuthorizeRoutes } from '../routes/authorize.routes.js';
-import { registerTokenRoutes } from '../routes/token.routes.js';
+import { registerLoginRoutes } from '../routes/login.routes';
+import { registerAuthorizeRoutes } from '../routes/authorize.routes';
+import { registerTokenRoutes } from '../routes/token.routes';
+import { registerRegisterRoutes } from '../routes/register.routes.js';
+import { registerVerifyRoutes } from '../routes/verify.routes.js';
+
+
 
 export async function createServer() {
     const app = Fastify({ logger: true });
@@ -16,6 +20,8 @@ export async function createServer() {
     registerLoginRoutes(app);
     registerAuthorizeRoutes(app);
     registerTokenRoutes(app);
+    registerRegisterRoutes(app);
+    registerVerifyRoutes(app);
 
     return app;
 }

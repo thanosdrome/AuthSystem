@@ -1,4 +1,4 @@
-import { pool } from '@/infrastructure/db';
+import { pool } from '../../../infrastructure/db';
 import { UserRepository, User } from '@/core';
 
 export class PostgresUserRepository implements UserRepository {
@@ -48,6 +48,12 @@ export class PostgresUserRepository implements UserRepository {
                 user.status,
                 user.updatedAt
             ]
+        );
+    }
+    async markEmailVerified(userId: string): Promise<void> {
+        await pool.query(
+            `UPDATE users SET email_verified = true WHERE id = $1`,
+            [userId]
         );
     }
 }

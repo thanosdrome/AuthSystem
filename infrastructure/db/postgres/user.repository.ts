@@ -1,0 +1,84 @@
+import { UserRepository } from '../../../packages/core/src/repositories/user.repository.js';
+import { User } from '../../../packages/core/src/entities/user.js';
+
+export class PostgresUserRepository implements UserRepository {
+    constructor(private readonly db: any) { }
+    async findById(id: string): Promise<User | null> {
+        const res = await this.db.query(
+            'SELECT * FROM users WHERE id = $1',
+            [id]
+        );
+        return res.rows[0] ?? null;
+    }
+    async update(user: User): Promise<void> {
+        await this.db.query(
+            `
+      UPDATE users
+      SET email = $2, email_verified = $3, password_hash = $4, status = $5,
+          updated_at = $6
+      WHERE id = $1
+      `,
+            [
+                user.id,
+                user.email,
+                user.emailVerified,
+                user.passwordHash,
+                user.status,
+                user.updatedAt
+            ]
+        );
+    }
+
+    async findByEmail(email: string): Promise<User | null> {
+        const res = await this.db.query(
+            'SELECT * FROM users WHERE email = $1',
+            [email]
+        );
+
+        const row = res.rows[0];
+        if (!row) return null;
+
+        return {
+            id: row.id,
+            email: row.email,
+            passwordHash: row.password_hash,
+            emailVerified: row.email_verified,
+            status: row.status,
+            createdAt: row.created_at,
+            updatedAt: row.updated_at
+        };
+    }
+
+    async create(user: User): Promise<void> {
+        await this.db.query(
+            `
+      INSERT INTO users (
+        id, email, email_verified, password_hash, status,
+        created_at, updated_at
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7)
+      `,
+            [
+                user.id,
+                user.email,
+                user.emailVerified,
+                user.passwordHash,
+                user.status,
+                user.createdAt,
+                user.updatedAt
+            ]
+        );
+    }
+
+    async markEmailVerified(userId: string): Promise<void> {
+        await this.db.query(
+            `
+    UPDATE users
+    SET email_verified = true,
+        status = 'ACTIVE',
+        updated_at = NOW()
+    WHERE id = $1
+    `,
+            [userId]
+        );
+    }
+}

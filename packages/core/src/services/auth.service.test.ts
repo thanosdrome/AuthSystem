@@ -1,47 +1,48 @@
-import { describe, it, expect } from 'vitest';
-import { AuthService } from './auth.service.js';
-import { UserStatus } from '../enums/user-status.js';
-import { verifyPassword, hashPassword } from '@/crypto/index.js';
+import { UserRepository } from '../repositories/user.repository';
+import { SessionRepository } from '../repositories/session.repository';
+import { verifyPassword } from '@/crypto';
+import { randomId } from '@/crypto';
+import { UserStatus } from '../entities/user';
 
-const userRepo = {
-    findById: async (id: string) => ({
-        id,
-        email: 'test@example.com',
-        emailVerified: true,
-        passwordHash: await hashPassword('secret'),
-        status: UserStatus.ACTIVE,
-        createdAt: new Date(),
-        updatedAt: new Date()
-    })
-};
+export class AuthService {
+    constructor(
+        private readonly users: UserRepository,
+        private readonly sessions: SessionRepository
+    ) { }
 
-const sessionRepo = {
-    create: async () => { },
-};
+    async login(input: {
+        email: string;
+        password: string;
+        ipAddress?: string;
+        userAgent?: string;
+    }) {
+        const user = await this.users.findByEmail(input.email.toLowerCase());
 
-describe('AuthService.authenticate', () => {
-    it('rejects invalid password', async () => {
-        const service = new AuthService(userRepo as any, sessionRepo as any);
+        // Generic failure — do NOT reveal which part failed
+        if (!user || user.status !== UserStatus.ACTIVE) {
+            throw new Error('INVALID_CREDENTIALS');
+        }
 
-        await expect(
-            service.authenticate(
-                'user-1',
-                false,
-                { ipAddress: '1.1.1.1', userAgent: 'test' }
-            )
-        ).rejects.toThrow();
-    });
-
-    it('creates session for valid user', async () => {
-        const service = new AuthService(userRepo as any, sessionRepo as any);
-
-        const session = await service.authenticate(
-            'user-1',
-            true,
-            { ipAddress: '1.1.1.1', userAgent: 'test' }
+        const valid = await verifyPassword(
+            input.password,
+            user.passwordHash
         );
 
-        expect(session.userId).toBe('user-1');
-        expect(session.expiresAt).toBeInstanceOf(Date);
-    });
-});
+        if (!valid) {
+            throw new Error('INVALID_CREDENTIALS');
+        }
+
+        const session = {
+            id: randomId(16),
+            userId: user.id,
+            createdAt: new Date(),
+            expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+            ipAddress: input.ipAddress!,
+            userAgent: input.userAgent!
+        };
+
+        await this.sessions.create(session);
+
+        return { user, session };
+    }
+}

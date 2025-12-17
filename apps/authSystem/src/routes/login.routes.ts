@@ -3,19 +3,31 @@ import { loginController } from '../controllers/login.controller.js';
 
 export function registerLoginRoutes(app: FastifyInstance) {
     app.post('/login', async (req, reply) => {
-        const { email, password } = req.body as any;
+        const body = req.body as any;
 
-        const session = await loginController(email, password, {
-            ipAddress: req.ip,
-            userAgent: req.headers['user-agent'] ?? 'unknown'
-        });
+        if (!body?.email || !body?.password) {
+            return reply.status(400).send({
+                error: 'INVALID_INPUT'
+            });
+        }
+        try {
+            const result = await loginController({
+                email: body.email.toLowerCase(),
+                password: body.password,
+                ipAddress: req.ip,
+                userAgent: req.headers['user-agent']
+            });
 
-        reply
-            .setCookie('sid', session.id, {
-                httpOnly: true,
-                sameSite: 'lax',
-                path: '/'
-            })
-            .send({ success: true });
+            return reply.send(result);
+        } catch (err: any) {
+            console.warn(err);
+            if (err.message === 'INVALID_CREDENTIALS') {
+                return reply.status(401).send({
+                    error: 'INVALID_CREDENTIALS'
+                });
+            }
+
+            throw err; // let Fastify handle unexpected errors
+        }
     });
 }

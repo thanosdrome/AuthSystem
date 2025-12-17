@@ -1,4 +1,4 @@
-import { pool } from '@/infrastructure/db';
+import { pool } from '../../../infrastructure/db';
 import { SessionRepository, Session } from '@/core';
 
 export class PostgresSessionRepository implements SessionRepository {

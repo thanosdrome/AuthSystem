@@ -1,4 +1,4 @@
-import { pool } from '@/infrastructure/db';
+import { pool } from '../../../infrastructure/db';
 import { AuthorizationCodeRepository, AuthorizationCode } from '@/oauth';
 
 export class PostgresAuthCodeRepository

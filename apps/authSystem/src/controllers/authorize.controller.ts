@@ -1,4 +1,4 @@
-import { Client } from '@/core/entities/client.js';
+import { Client } from '@/core';
 import { container } from '../bootstrap/container.js';
 
 export async function authorizeController(input: {

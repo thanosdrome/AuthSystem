@@ -2,8 +2,34 @@ import { UserRepository } from '../repositories/user.repository.js';
 import { SessionRepository } from '../repositories/session.repository.js';
 import { UserStatus } from '../enums/user-status.js';
 import { Session } from '../entities/session.js';
+import { verifyPassword } from '@/crypto';
 
 export class AuthService {
+    async login(input: {
+        email: string;
+        password: string;
+        ipAddress?: string;
+        userAgent?: string;
+    }): Promise<{ user: any; session: Session }> {
+        const normalizedEmail = input.email.trim().toLowerCase();
+        const user = await this.users.findByEmail(normalizedEmail);
+
+        if (!user) {
+            throw new Error('INVALID_CREDENTIALS');
+        }
+        const validPass = await verifyPassword(input.password, user.passwordHash);
+        if (!validPass) {
+            throw new Error('INVALID_CREDENTIALS');
+        }
+
+
+        const session = await this.authenticate(user.id, true, {
+            ipAddress: input.ipAddress || 'unknown',
+            userAgent: input.userAgent || 'unknown',
+        });
+
+        return { user, session };
+    }
     private users: UserRepository;
     private sessions: SessionRepository;
 

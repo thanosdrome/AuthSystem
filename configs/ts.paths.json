@@ -1,53 +1,28 @@
 {
+    "$schema": "https://json.schemastore.org/tsconfig",
     "compilerOptions": {
+        "baseUrl": ".",
         "paths": {
             "@/audit": [
                 "packages/audit/src"
             ],
-            "@/audit/*": [
-                "packages/audit/src/*"
-            ],
             "@/core": [
                 "packages/core/src"
-            ],
-            "@/core/*": [
-                "packages/core/src/*"
-            ],
-            "@/core/adapters/*": [
-                "packages/core/adapters/*"
             ],
             "@/crypto": [
                 "packages/crypto/src"
             ],
-            "@/crypto/*": [
-                "packages/crypto/src/*"
-            ],
             "@/oauth": [
                 "packages/oauth/src"
-            ],
-            "@/oauth/*": [
-                "packages/oauth/src/*"
-            ],
-            "@/oauth/adapters/*": [
-                "packages/oauth/adapters/*"
             ],
             "@/policies": [
                 "packages/policies/src"
             ],
-            "@/policies/*": [
-                "packages/policies/src/*"
-            ],
             "@/tokens": [
                 "packages/tokens/src"
             ],
-            "@/tokens/*": [
-                "packages/tokens/src/*"
-            ],
             "@/infrastructure": [
-                "infrastructure/"
-            ],
-            "@/infrastructure/*": [
-                "infrastructure/*"
+                "infrastructure"
             ]
         }
     }

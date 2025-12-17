@@ -5,4 +5,5 @@ export interface UserRepository {
     findByEmail(email: string): Promise<User | null>;
     create(user: User): Promise<void>;
     update(user: User): Promise<void>;
+    markEmailVerified(userId: string): Promise<void>;
 }

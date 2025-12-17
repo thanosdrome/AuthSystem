@@ -11,3 +11,5 @@ export * from './repositories/client.repository.js';
 export * from './repositories/session.repository.js';
 
 export { AuthService } from './services/auth.service.js';
+export { RegistrationService } from './services/registration.services.js';
+export * from './repositories/refresh-token.repository.js';

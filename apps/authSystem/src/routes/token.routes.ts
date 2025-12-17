@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { tokenController } from '../controllers/token.controller.js';
+import { tokenController, refreshTokenController } from '../controllers/token.controller.js';
 
 export function registerTokenRoutes(app: FastifyInstance) {
     app.post('/token', async (req) => {
@@ -22,5 +22,10 @@ export function registerTokenRoutes(app: FastifyInstance) {
             },
             codeVerifier: code_verifier
         });
+    });
+
+    app.post('/token/refresh', async (req) => {
+        const { refreshToken } = req.body as { refreshToken: string };
+        return refreshTokenController(refreshToken);
     });
 }

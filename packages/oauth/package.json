@@ -1,4 +1,5 @@
 {
+    "$schema": "https://json.schemastore.org/tsconfig",
     "name": "@auth/oauth",
     "version": "1.0.0",
     "type": "module",

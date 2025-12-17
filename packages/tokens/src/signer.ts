@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { randomId } from '@/crypto/index.js';
+import { randomId } from '@/crypto';
 
 export class TokenSigner {
     private issuer: string;

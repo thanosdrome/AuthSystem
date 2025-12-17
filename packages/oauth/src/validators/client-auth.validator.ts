@@ -1,4 +1,4 @@
-import { verifyPassword } from '@/crypto/password';
+import { verifyPassword } from '@/crypto';
 import { Client } from '@/core';
 
 export async function validateClientSecret(

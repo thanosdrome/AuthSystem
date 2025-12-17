@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { AuthorizationCodeRepository } from '../repositories/authorization-code.repository.js';
-import { Client } from '@/core/index.js';
+import { Client } from '@/core';
 import { ClientValidator } from '../validators/client.validator.js';
 import { ScopeValidator } from '../validators/scope.validator.js';
 import { AuthorizationCode } from '../entities/authorization-code.js';
