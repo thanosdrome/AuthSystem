@@ -71,4 +71,5 @@ export class PostgresSessionRepository implements SessionRepository {
             [userId]
         );
     }
+
 }

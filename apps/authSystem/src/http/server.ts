@@ -6,7 +6,7 @@ import { registerAuthorizeRoutes } from '../routes/authorize.routes';
 import { registerTokenRoutes } from '../routes/token.routes';
 import { registerRegisterRoutes } from '../routes/register.routes.js';
 import { registerVerifyRoutes } from '../routes/verify.routes.js';
-
+import { registerPasswordResetRoutes } from '../routes/password-reset.routes.js';
 
 
 export async function createServer() {
@@ -22,6 +22,7 @@ export async function createServer() {
     registerTokenRoutes(app);
     registerRegisterRoutes(app);
     registerVerifyRoutes(app);
+    registerPasswordResetRoutes(app);
 
     return app;
 }

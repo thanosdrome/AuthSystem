@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { tokenController, refreshTokenController } from '../controllers/token.controller.js';
+import { container } from '../bootstrap/container.js';
 
 export function registerTokenRoutes(app: FastifyInstance) {
     app.post('/token', async (req) => {
@@ -24,7 +25,14 @@ export function registerTokenRoutes(app: FastifyInstance) {
         });
     });
 
-    app.post('/token/refresh', async (req) => {
+    app.post('/token/refresh', async (req, res) => {
+        const key = `rl:refresh:${req.ip}`;
+        const allowed = await container.rateLimitService.check(key);
+        if (!allowed) {
+            return res.status(429).send({
+                error: 'TOO_MANY_REQUESTS'
+            });
+        }
         const { refreshToken } = req.body as { refreshToken: string };
         return refreshTokenController(refreshToken);
     });

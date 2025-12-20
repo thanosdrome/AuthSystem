@@ -1,8 +1,18 @@
 import { FastifyInstance } from 'fastify';
 import { loginController } from '../controllers/login.controller.js';
+import { container } from '../bootstrap/container.js';
 
 export function registerLoginRoutes(app: FastifyInstance) {
     app.post('/login', async (req, reply) => {
+
+        const key = `rl:login:${req.ip}`;
+
+        const allowed = await container.rateLimitService.check(key);
+        if (!allowed) {
+            return reply.status(429).send({
+                error: 'TOO_MANY_REQUESTS'
+            });
+        }
         const body = req.body as any;
 
         if (!body?.email || !body?.password) {

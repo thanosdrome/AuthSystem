@@ -15,10 +15,14 @@ import { RedisEmailVerificationRepository } from '../../../../infrastructure/cac
 import { EmailVerificationService } from '../services/email-verification.service.js';
 import { RefreshTokenService } from '@/tokens';
 import { PostgresRefreshTokenRepository } from '../../../../infrastructure/db/postgres/refresh-token.repository';
+import { RateLimitService } from '@/core';
+import { HealthService } from '@/core';
+import { PasswordResetService } from '../../../../packages/core/src/services/password-reset.service.js';
+import { PostgresPasswordResetRepository } from '../../../../infrastructure/db/postgres/password-reset.repository';
+
 
 
 const { privateKey: jwtPrivateKey } = loadKeys()!;
-
 const signer = new TokenSigner(
     'https://auth.localhost',
     jwtPrivateKey,
@@ -31,8 +35,9 @@ const sessionRepository = new PostgresSessionRepository(pgPool);
 const authCodeRepo = new RedisAuthorizationCodeRepository(redis);
 const emailVerificationRepo = new RedisEmailVerificationRepository(redis);
 const refreshTokenRepo = new PostgresRefreshTokenRepository(pgPool);
-
-
+const RATE_LIMIT_WINDOW = Number(process.env.RATE_LIMIT_WINDOW_SECONDS || 60);
+const RATE_LIMIT_MAX = Number(process.env.RATE_LIMIT_MAX_REQUESTS || 10);
+const RESET_TOKEN_TTL = Number(process.env.PASSWORD_RESET_TTL_SECONDS || 900);
 // Seed a test user
 // Note: login.controller currently passes email as userId, so we use email as ID here for valid lookup
 export const container = {
@@ -50,5 +55,21 @@ export const container = {
         Number(process.env.EMAIL_VERIFY_TOKEN_TTL)
     ),
     refreshTokenService: new RefreshTokenService(refreshTokenRepo, signer),
-    accessTokenSigner: signer
+    accessTokenSigner: signer,
+    rateLimitService: new RateLimitService(
+        redis,
+        RATE_LIMIT_WINDOW,
+        RATE_LIMIT_MAX
+    )
 };
+export const healthService = new HealthService(
+    pgPool,     // your pg pool / client
+    redis   // your redis client
+);
+export const passwordResetService = new PasswordResetService(
+    userRepository,
+    new PostgresPasswordResetRepository(pgPool),
+    sessionRepository,
+    refreshTokenRepo,
+    RESET_TOKEN_TTL
+);

@@ -13,3 +13,7 @@ export * from './repositories/session.repository.js';
 export { AuthService } from './services/auth.service.js';
 export { RegistrationService } from './services/registration.services.js';
 export * from './repositories/refresh-token.repository.js';
+export * from './services/logout.service.js';
+export * from './services/rate-limit.service.js';
+export { HealthService } from './services/health.service.js';
+export * from './repositories/password-reset.repository.js';

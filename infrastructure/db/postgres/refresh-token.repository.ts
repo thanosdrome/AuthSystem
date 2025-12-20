@@ -52,4 +52,15 @@ export class PostgresRefreshTokenRepository
             [id]
         );
     }
+    async revokeBySession(sessionId: string) {
+        await this.db.query(
+            `
+    UPDATE refresh_tokens
+    SET revoked_at = NOW()
+    WHERE session_id = $1
+      AND revoked_at IS NULL
+    `,
+            [sessionId]
+        );
+    }
 }

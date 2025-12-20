@@ -17,4 +17,5 @@ export interface RefreshTokenRepository {
     } | null>;
 
     revoke(id: string): Promise<void>;
+    revokeBySession(sessionId: string): Promise<void>;
 }
