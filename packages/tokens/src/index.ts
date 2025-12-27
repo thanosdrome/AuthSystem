@@ -8,3 +8,5 @@ export * from './tokens/id-token';
 export * from './signer';
 export * from './verifier';
 export * from './jwks/jwks.service';
+export * from './key-stores';
+export * from './access-token-signer';

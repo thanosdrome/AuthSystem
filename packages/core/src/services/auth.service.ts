@@ -3,6 +3,7 @@ import { SessionRepository } from '../repositories/session.repository.js';
 import { UserStatus } from '../enums/user-status.js';
 import { Session } from '../entities/session.js';
 import { verifyPassword } from '@/crypto';
+import { randomId } from '@/crypto';
 
 export class AuthService {
     async login(input: {
@@ -74,4 +75,23 @@ export class AuthService {
         await this.sessions.create(session);
         return session;
     }
+
+    async loginOAuth(userId: string, context?: {
+        ip?: string;
+        userAgent?: string;
+    }) {
+        const session = {
+            id: randomId(16),
+            userId,
+            createdAt: new Date(),
+            ipAddress: context?.ip!,
+            userAgent: context?.userAgent!,
+            expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24h
+        };
+
+        await this.sessions.create(session);
+
+        return { session };
+    }
+
 }
