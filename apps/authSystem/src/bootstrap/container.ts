@@ -19,14 +19,16 @@ import { RateLimitService } from '@/core';
 import { HealthService } from '@/core';
 import { PasswordResetService } from '../../../../packages/core/src/services/password-reset.service.js';
 import { PostgresPasswordResetRepository } from '../../../../infrastructure/db/postgres/password-reset.repository';
-// import { generateRsaKeyPair } from '@/crypto';
 import { KeyStore } from '@/tokens';
 import { AccessTokenSigner } from '@/tokens';
 import { loadOrCreateRsaKey } from '@/crypto';
 import { OAuthService } from '../../../../packages/core/src/services/oauth.service.js';
-import { OauthIdentityRepository } from '../../../../packages/core/src/repositories/oauth-identity.repository';
 import { PostgresOAuthIdentityRepository } from '../../../../infrastructure/db/postgres/oauth-identity.repository.js';
 import { RedisOAuthStateRepository } from '../../../../infrastructure/cache/redis/oauth-state.repository';
+import { EncryptionService } from '../../../../packages/crypto/src/encryption.js';
+import { PostgresKeyRepository } from '../../../../infrastructure/db/postgres/key.repository.js';
+import { KeyManagerService } from '../../../../packages/tokens/src/rotation/key-manager.service.js';
+import { MfaService } from '../../../../packages/core/src/services/mfa.service.js';
 
 
 const { privateKey: jwtPrivateKey } = loadKeys()!;
@@ -36,9 +38,16 @@ const signer = new TokenSigner(
     'auth-key-1'
 );
 
+const MASTER_KEY = Buffer.from(process.env.MASTER_ENCRYPTION_KEY || '01234567890123456789012345678901');
+const encryptionService = new EncryptionService(MASTER_KEY);
+
 // INITIALIZE AND SEED REPOSITORIES
 const userRepository = new PostgresUserRepository(pgPool);
 const sessionRepository = new PostgresSessionRepository(pgPool);
+const keyRepository = new PostgresKeyRepository(pgPool);
+const keyManagerService = new KeyManagerService(keyRepository, encryptionService);
+const mfaService = new MfaService(userRepository, encryptionService);
+
 const authCodeRepo = new RedisAuthorizationCodeRepository(redis);
 const emailVerificationRepo = new RedisEmailVerificationRepository(redis);
 const refreshTokenRepo = new PostgresRefreshTokenRepository(pgPool);
@@ -68,6 +77,9 @@ export const container = {
         RATE_LIMIT_WINDOW,
         RATE_LIMIT_MAX
     ),
+    mfaService: mfaService,
+    keyManagerService: keyManagerService,
+    encryptionService: encryptionService
 };
 export const healthService = new HealthService(
     pgPool,     // your pg pool / client

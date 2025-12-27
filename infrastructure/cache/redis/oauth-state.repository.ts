@@ -5,21 +5,25 @@ export class RedisOAuthStateRepository
 
     constructor(private readonly redis: any) { }
 
-    async create(state: string, ttlSeconds: number) {
+    async create(
+        state: string,
+        data: { codeVerifier: string },
+        ttlSeconds: number
+    ) {
         await this.redis.set(
             `oauth_state:${state}`,
-            '1',
+            JSON.stringify(data),
             { EX: ttlSeconds }
         );
     }
 
-    async consume(state: string): Promise<boolean> {
+    async consume(state: string) {
         const key = `oauth_state:${state}`;
-        const exists = await this.redis.get(key);
+        const raw = await this.redis.get(key);
 
-        if (!exists) return false;
+        if (!raw) return null;
 
         await this.redis.del(key);
-        return true;
+        return JSON.parse(raw);
     }
 }

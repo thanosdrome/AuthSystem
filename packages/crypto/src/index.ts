@@ -4,3 +4,4 @@ export * from './signatures.js';
 export * from './random.js';
 // export * from './jwk.js';
 export * from './jwk-store.js'
+export * from './pkce.js'

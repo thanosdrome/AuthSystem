@@ -8,14 +8,27 @@ export class PostgresUserRepository implements UserRepository {
             'SELECT * FROM users WHERE id = $1',
             [id]
         );
-        return res.rows[0] ?? null;
+        const row = res.rows[0];
+        if (!row) return null;
+        return {
+            id: row.id,
+            email: row.email,
+            passwordHash: row.password_hash,
+            emailVerified: row.email_verified,
+            status: row.status,
+            mfaEnabled: row.mfa_enabled,
+            mfaSecret: row.mfa_secret,
+            backupCodes: row.backup_codes || [],
+            createdAt: row.created_at,
+            updatedAt: row.updated_at
+        };
     }
     async update(user: User): Promise<void> {
         await this.db.query(
             `
       UPDATE users
       SET email = $2, email_verified = $3, password_hash = $4, status = $5,
-          updated_at = $6
+          mfa_enabled = $6, mfa_secret = $7, backup_codes = $8, updated_at = $9
       WHERE id = $1
       `,
             [
@@ -24,6 +37,9 @@ export class PostgresUserRepository implements UserRepository {
                 user.emailVerified,
                 user.passwordHash,
                 user.status,
+                user.mfaEnabled,
+                user.mfaSecret,
+                user.backupCodes,
                 user.updatedAt
             ]
         );
@@ -44,6 +60,9 @@ export class PostgresUserRepository implements UserRepository {
             passwordHash: row.password_hash,
             emailVerified: row.email_verified,
             status: row.status,
+            mfaEnabled: row.mfa_enabled,
+            mfaSecret: row.mfa_secret,
+            backupCodes: row.backup_codes || [],
             createdAt: row.created_at,
             updatedAt: row.updated_at
         };
@@ -54,8 +73,9 @@ export class PostgresUserRepository implements UserRepository {
             `
       INSERT INTO users (
         id, email, email_verified, password_hash, status,
+        mfa_enabled, mfa_secret, backup_codes,
         created_at, updated_at
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7)
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
       `,
             [
                 user.id,
@@ -63,6 +83,9 @@ export class PostgresUserRepository implements UserRepository {
                 user.emailVerified,
                 user.passwordHash,
                 user.status,
+                user.mfaEnabled,
+                user.mfaSecret,
+                user.backupCodes,
                 user.createdAt,
                 user.updatedAt
             ]
@@ -89,6 +112,8 @@ export class PostgresUserRepository implements UserRepository {
             emailVerified: data.emailVerified,
             passwordHash: '', // No password hash for OAuth users
             status: 'ACTIVE' as any,
+            mfaEnabled: false,
+            backupCodes: [],
             createdAt: new Date(),
             updatedAt: new Date()
         };

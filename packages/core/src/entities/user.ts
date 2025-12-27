@@ -6,6 +6,9 @@ export interface User {
     emailVerified: boolean;
     passwordHash: string;
     status: UserStatus;
+    mfaEnabled: boolean;
+    mfaSecret?: string;
+    backupCodes: string[];
     createdAt: Date;
     updatedAt: Date;
 }

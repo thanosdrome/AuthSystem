@@ -1,10 +1,14 @@
+# CentralAuth Project Layout
+
+> [!NOTE]
+> For a detailed breakdown of كل package and its purpose, see [PROJECT_STRUCTURE.md](file:///d:/Projects/CentralAuth/PROJECT_STRUCTURE.md).
 
 ## Top-level layout
 
 ```text
 CentralAuth/
 ├── apps/
-│   └── auth-server/
+│   └── authSystem/
 ├── packages/
 │   ├── core/
 │   ├── crypto/
@@ -14,7 +18,7 @@ CentralAuth/
 │   └── audit/
 ├── infrastructure/
 │   ├── db/
-│   ├── migrations/
+│   ├── cache/  
 │   ├── docker/
 │   └── terraform/
 ├── docs/
@@ -24,13 +28,20 @@ CentralAuth/
 └── README.md
 ```
 
+### Quick Reference
+
+- **`apps/authSystem`**: The main authentication server.
+- **`packages/`**: Shared domain logic and libraries.
+- **`infrastructure/`**: Database, cache, and DevOps configurations.
+- **`docs/`**: Technical documentation.
+
 
 ### apps
 
 Runnable services only.
 
 ```text
-apps/auth-server/
+apps/authSystem/
 ├── src/
 │   ├── http/
 │   │   ├── server.ts

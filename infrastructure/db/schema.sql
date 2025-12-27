@@ -4,6 +4,9 @@ CREATE TABLE users (
   email_verified BOOLEAN NOT NULL,
   password_hash TEXT NOT NULL,
   status TEXT NOT NULL,
+  mfa_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+  mfa_secret TEXT,
+  backup_codes TEXT[],
   created_at TIMESTAMP NOT NULL,
   updated_at TIMESTAMP NOT NULL
 );
@@ -27,4 +30,14 @@ CREATE TABLE authorization_codes (
   expires_at TIMESTAMP NOT NULL,
   consumed_at TIMESTAMP,
   created_at TIMESTAMP NOT NULL
+);
+
+CREATE TABLE cryptographic_keys (
+  kid TEXT PRIMARY KEY,
+  private_key_enc TEXT NOT NULL,
+  public_key_pem TEXT NOT NULL,
+  status TEXT NOT NULL, -- 'PENDING', 'ACTIVE', 'RETIRED'
+  created_at TIMESTAMP NOT NULL,
+  activated_at TIMESTAMP,
+  retired_at TIMESTAMP
 );
