@@ -17,3 +17,6 @@ export * from './services/logout.service.js';
 export * from './services/rate-limit.service.js';
 export { HealthService } from './services/health.service.js';
 export * from './repositories/password-reset.repository.js';
+export * from './models/jwk.js';
+export * from './repositories/oauth-identity.repository.js';
+

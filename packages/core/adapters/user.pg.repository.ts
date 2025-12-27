@@ -2,6 +2,9 @@ import { pool } from '../../../infrastructure/db';
 import { UserRepository, User } from '@/core';
 
 export class PostgresUserRepository implements UserRepository {
+    createOAuthUser(user: { id: string; email: string; emailVerified: boolean; }): Promise<User> {
+        throw new Error('Method not implemented.');
+    }
     async findById(id: string): Promise<User | null> {
         const res = await pool.query(
             'SELECT * FROM users WHERE id = $1',

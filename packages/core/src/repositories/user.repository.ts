@@ -6,4 +6,5 @@ export interface UserRepository {
     create(user: User): Promise<void>;
     update(user: User): Promise<void>;
     markEmailVerified(userId: string): Promise<void>;
+    createOAuthUser(user: { id: string; email: string; emailVerified: boolean }): Promise<User>;
 }

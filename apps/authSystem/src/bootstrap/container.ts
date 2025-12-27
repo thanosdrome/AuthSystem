@@ -19,7 +19,14 @@ import { RateLimitService } from '@/core';
 import { HealthService } from '@/core';
 import { PasswordResetService } from '../../../../packages/core/src/services/password-reset.service.js';
 import { PostgresPasswordResetRepository } from '../../../../infrastructure/db/postgres/password-reset.repository';
-
+// import { generateRsaKeyPair } from '@/crypto';
+import { KeyStore } from '@/tokens';
+import { AccessTokenSigner } from '@/tokens';
+import { loadOrCreateRsaKey } from '@/crypto';
+import { OAuthService } from '../../../../packages/core/src/services/oauth.service.js';
+import { OauthIdentityRepository } from '../../../../packages/core/src/repositories/oauth-identity.repository';
+import { PostgresOAuthIdentityRepository } from '../../../../infrastructure/db/postgres/oauth-identity.repository.js';
+import { RedisOAuthStateRepository } from '../../../../infrastructure/cache/redis/oauth-state.repository';
 
 
 const { privateKey: jwtPrivateKey } = loadKeys()!;
@@ -60,7 +67,7 @@ export const container = {
         redis,
         RATE_LIMIT_WINDOW,
         RATE_LIMIT_MAX
-    )
+    ),
 };
 export const healthService = new HealthService(
     pgPool,     // your pg pool / client
@@ -73,3 +80,21 @@ export const passwordResetService = new PasswordResetService(
     refreshTokenRepo,
     RESET_TOKEN_TTL
 );
+export const keyStore = new KeyStore();
+
+const { kid, publicKey, privateKey } = loadOrCreateRsaKey();
+keyStore.addKey(kid, publicKey, privateKey);
+
+console.log('[JWKS] loaded signing key:', kid);
+
+export const accessTokenSigner = new AccessTokenSigner(keyStore);
+export const oauthIdentityRepository =
+    new PostgresOAuthIdentityRepository(pgPool);
+export const oauthService = new OAuthService(
+    userRepository,
+    oauthIdentityRepository
+);
+
+export const oauthStateRepository =
+    new RedisOAuthStateRepository(redis);
+

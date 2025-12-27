@@ -81,4 +81,19 @@ export class PostgresUserRepository implements UserRepository {
             [userId]
         );
     }
+
+    async createOAuthUser(data: { id: string; email: string; emailVerified: boolean }): Promise<User> {
+        const user: User = {
+            id: data.id,
+            email: data.email,
+            emailVerified: data.emailVerified,
+            passwordHash: '', // No password hash for OAuth users
+            status: 'ACTIVE' as any,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+
+        await this.create(user);
+        return user;
+    }
 }
