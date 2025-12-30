@@ -1,10 +1,10 @@
 import { User } from '../entities/user.js';
 
 export interface UserRepository {
-    findById(id: string): Promise<User | null>;
-    findByEmail(email: string): Promise<User | null>;
-    create(user: User): Promise<void>;
-    update(user: User): Promise<void>;
-    markEmailVerified(userId: string): Promise<void>;
-    createOAuthUser(user: { id: string; email: string; emailVerified: boolean }): Promise<User>;
+    findById(id: string, tx?: any): Promise<User | null>;
+    findByEmail(email: string, tx?: any): Promise<User | null>;
+    create(user: User, tx?: any): Promise<void>;
+    update(user: User, tx?: any): Promise<void>;
+    markEmailVerified(userId: string, tx?: any): Promise<void>;
+    createOAuthUser(user: { id: string; email: string; emailVerified: boolean }, tx?: any): Promise<User>;
 }

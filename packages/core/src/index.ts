@@ -21,5 +21,6 @@ export * from './models/jwk.js';
 export * from './repositories/oauth-identity.repository.js';
 export * from './repositories/oauth-state.repository.js';
 export * from './services/oauth.service.js';
+export * from './errors/index.js';
 
 

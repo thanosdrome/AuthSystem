@@ -70,7 +70,7 @@ export const container = {
         userRepository,
         Number(process.env.EMAIL_VERIFY_TOKEN_TTL)
     ),
-    refreshTokenService: new RefreshTokenService(refreshTokenRepo, signer),
+    refreshTokenService: new RefreshTokenService(refreshTokenRepo, signer, redis),
     accessTokenSigner: signer,
     rateLimitService: new RateLimitService(
         redis,
@@ -79,7 +79,8 @@ export const container = {
     ),
     mfaService: mfaService,
     keyManagerService: keyManagerService,
-    encryptionService: encryptionService
+    encryptionService: encryptionService,
+    userRepository: userRepository
 };
 export const healthService = new HealthService(
     pgPool,     // your pg pool / client

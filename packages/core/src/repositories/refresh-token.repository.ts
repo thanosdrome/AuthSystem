@@ -14,8 +14,10 @@ export interface RefreshTokenRepository {
         sessionId: string;
         expiresAt: Date;
         revokedAt: Date | null;
+        rotatedAt?: Date | null;
     } | null>;
 
     revoke(id: string): Promise<void>;
+    markRotated(id: string): Promise<void>;
     revokeBySession(sessionId: string): Promise<void>;
 }

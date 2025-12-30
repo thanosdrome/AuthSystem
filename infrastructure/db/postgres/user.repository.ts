@@ -3,8 +3,13 @@ import { User } from '../../../packages/core/src/entities/user.js';
 
 export class PostgresUserRepository implements UserRepository {
     constructor(private readonly db: any) { }
-    async findById(id: string): Promise<User | null> {
-        const res = await this.db.query(
+
+    private q(tx?: any) {
+        return tx || this.db;
+    }
+
+    async findById(id: string, tx?: any): Promise<User | null> {
+        const res = await this.q(tx).query(
             'SELECT * FROM users WHERE id = $1',
             [id]
         );
@@ -23,8 +28,9 @@ export class PostgresUserRepository implements UserRepository {
             updatedAt: row.updated_at
         };
     }
-    async update(user: User): Promise<void> {
-        await this.db.query(
+
+    async update(user: User, tx?: any): Promise<void> {
+        await this.q(tx).query(
             `
       UPDATE users
       SET email = $2, email_verified = $3, password_hash = $4, status = $5,
@@ -45,8 +51,8 @@ export class PostgresUserRepository implements UserRepository {
         );
     }
 
-    async findByEmail(email: string): Promise<User | null> {
-        const res = await this.db.query(
+    async findByEmail(email: string, tx?: any): Promise<User | null> {
+        const res = await this.q(tx).query(
             'SELECT * FROM users WHERE email = $1',
             [email]
         );
@@ -68,8 +74,8 @@ export class PostgresUserRepository implements UserRepository {
         };
     }
 
-    async create(user: User): Promise<void> {
-        await this.db.query(
+    async create(user: User, tx?: any): Promise<void> {
+        await this.q(tx).query(
             `
       INSERT INTO users (
         id, email, email_verified, password_hash, status,
@@ -92,8 +98,8 @@ export class PostgresUserRepository implements UserRepository {
         );
     }
 
-    async markEmailVerified(userId: string): Promise<void> {
-        await this.db.query(
+    async markEmailVerified(userId: string, tx?: any): Promise<void> {
+        await this.q(tx).query(
             `
     UPDATE users
     SET email_verified = true,
@@ -105,7 +111,7 @@ export class PostgresUserRepository implements UserRepository {
         );
     }
 
-    async createOAuthUser(data: { id: string; email: string; emailVerified: boolean }): Promise<User> {
+    async createOAuthUser(data: { id: string; email: string; emailVerified: boolean }, tx?: any): Promise<User> {
         const user: User = {
             id: data.id,
             email: data.email,
@@ -118,7 +124,7 @@ export class PostgresUserRepository implements UserRepository {
             updatedAt: new Date()
         };
 
-        await this.create(user);
+        await this.create(user, tx);
         return user;
     }
 }

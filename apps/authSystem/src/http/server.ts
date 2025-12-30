@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
+import crypto from 'node:crypto';
 
 import { registerLoginRoutes } from '../routes/login.routes';
 import { registerAuthorizeRoutes } from '../routes/authorize.routes';
@@ -11,6 +12,10 @@ import { registerPasswordResetRoutes } from '../routes/password-reset.routes.js'
 import { registerJwksRoutes } from '../routes/jwks.route';
 import { registerHealthRoutes } from '../routes/health.routes';
 import { registerOAuthRoutes } from '../routes/oauth.routes.js';
+import { registerDiscoveryRoutes } from '../routes/discovery.routes.js';
+import { registerMfaRoutes } from '../routes/mfa.routes.js';
+import { registerUserRoutes } from '../routes/user.routes.js';
+import { setupErrorHandler } from './error-handler.js';
 
 
 
@@ -26,7 +31,24 @@ export async function createServer() {
             throw new Error(`Missing env: ${key}`);
         }
     }
-    const app = Fastify({ logger: true });
+    const app = Fastify({
+        logger: {
+            redact: ['req.headers.authorization', 'req.body.password'],
+            serializers: {
+                req(request) {
+                    return {
+                        method: request.method,
+                        url: request.url,
+                        id: request.id,
+                        ip: request.ip
+                    };
+                }
+            }
+        },
+        genReqId: () => crypto.randomUUID()
+    });
+
+    setupErrorHandler(app);
 
     await app.register(cookie, {
         secret: process.env.COOKIE_SECRET!,
@@ -49,6 +71,8 @@ export async function createServer() {
     registerJwksRoutes(app);
     registerHealthRoutes(app);
     registerOAuthRoutes(app);
+    registerDiscoveryRoutes(app);
+    registerMfaRoutes(app);
 
 
     return app;

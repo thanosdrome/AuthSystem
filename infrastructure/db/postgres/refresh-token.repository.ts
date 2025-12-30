@@ -38,8 +38,16 @@ export class PostgresRefreshTokenRepository
             userId: row.user_id,
             sessionId: row.session_id,
             expiresAt: row.expires_at,
-            revokedAt: row.revoked_at
+            revokedAt: row.revoked_at,
+            rotatedAt: row.rotated_at
         };
+    }
+
+    async markRotated(id: string) {
+        await this.db.query(
+            `UPDATE refresh_tokens SET rotated_at = NOW(), revoked_at = NOW() WHERE id = $1`,
+            [id]
+        );
     }
 
     async revoke(id: string) {

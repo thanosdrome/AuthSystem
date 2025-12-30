@@ -18,6 +18,7 @@ export async function up(pgm: MigrationBuilder) {
         },
         expires_at: { type: 'timestamp', notNull: true },
         revoked_at: { type: 'timestamp' },
+        rotated_at: { type: 'timestamp' },
         created_at: { type: 'timestamp', notNull: true }
     });
 }
